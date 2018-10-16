@@ -2,7 +2,7 @@
 
 ## Issues to be tackled
 Recent floods in the states of Kerala and Nagaland have highlighted a major issue with the present disaster management systems : **resource allocation and the resultant deficit**.
-Most of the time, the deficit isn't caused by the actual unavailability of the resources with the disaster management teams. In fact, in the event of the Kerala floods, a huge amount of resources in one relief camp were observed to be discarded(especially clothes), even when some people in other relief camps needed them very badly. The main issue here is the lack of **co-ordination** between the relief camps and the **lack efficient transfer** of resources between the camps. 
+Most of the time, the deficit isn't caused by the actual unavailability of the resources with the disaster management teams. In fact, in the event of the Kerala floods, a huge amount of resources in one relief camp were observed to be discarded(especially clothes), even when some people in other relief camps needed them very badly. The main issue here is the lack of **co-ordination** between the relief camps and the **lack of efficient transfer** of resources between the camps. 
 
 We tackle this problem with the reasonable assumption that the camps are well equipped with mobile/computing devices with internet and GPS connectivity, and if they are not reachable by any technical means, it is unable to include them in the coordination process.
 
