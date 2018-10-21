@@ -1,9 +1,10 @@
 import os
 
 from flask import Flask
+from flask import render_template
 
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__,  instance_relative_config=True, template_folder='../templates', static_folder='../static')
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
@@ -23,6 +24,6 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/')
     def hello():
-        return 'Hello, World!'
+        return render_template('login.html')
 
     return app
