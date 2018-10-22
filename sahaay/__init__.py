@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 
 def create_app(test_config=None):
     app = Flask(__name__,  instance_relative_config=True)
@@ -21,9 +21,18 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return render_template('login.html')
+    # form to collect info
+    @app.route('/', methods=['GET', 'POST'])
+    def form():
+        if request.method == 'POST':
+            idx = request.form['idx'] 
+            qty = request.form['qty']
+            
+            print idx, qty
+            
+            
+    	return render_template('inventory-update.html')
+        
+        
 
     return app
