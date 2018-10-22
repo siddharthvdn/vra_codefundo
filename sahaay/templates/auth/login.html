@@ -28,26 +28,30 @@
     <div class="login_wrapper">
       <div class="animate form login_form">
         <section class="login_content">
-          <form data-parsley-validate method="post">
+          <form data-parsley-validate method="post" action="/auth/login">
             <h1>Login Form</h1>
-            {% for field in login_form if field.widget.input_type != 'hidden'  %}
               <div>
-                {{ field(class="form-control required", placeholder=field.label.text) }}
+               
+                <label for="username">Username</label>
+                <input class="form-control required" name="username" id="username" required>
+                <label for="password">Password</label>
+                <input class="form-control required" type="password" name="password" id="password" required>
+
               </div>
-            {% endfor %}
+
             <div>
             <button type="submit" class="btn btn-default submit" name="login">Log in</button>
             </div>
             <div class="clearfix"></div>
             <div class="separator">
-              <p class="change_link">New to site?
+              <p class="change_link">Not registered yet?
                 <a href="#signup" class="to_register"> Create Account </a>
               </p>
               <div class="clearfix"></div>
               <br/>
               <div>
-                <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
-                <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+                <h1><i class="fa fa-paw"></i> Sahaay </h1>
+                <p>©2016 All Rights Reserved. </p>
               </div>
             </div>
           </form>
@@ -55,15 +59,20 @@
       </div>
       <div id="register" class="animate form registration_form">
         <section class="login_content">
-          <form data-parsley-validate id="create-user-form" method="post">
+        <form data-parsley-validate id="create-user-form" method="post" action="/auth/register">
             <h1>Create Account</h1>
-            {% for field in create_account_form if field.widget.input_type != 'hidden'  %}
-              <div>
-                {{ field(class="form-control required", placeholder=field.label.text) }}
-              </div>
-            {% endfor %}
+            <label for="username">Username</label>
+            <input class="form-control required" name="username" id="username" required>
+            <label for="password">Password</label>
+            <input class="form-control required" type="password" name="password" id="password" required>
+            <label for="email">Email</label>
+            <input class="form-control required" type="email" name="email" id="email" required>
+            <label for="latitude">Latitude</label>
+            <input class="form-control required" name="latitude" id="username" required>
+            <label for="longitude">Longitude</label>
+            <input class="form-control required" name="longitude" id="username" required>
             <div>
-              <button type="button" class="btn btn-default" onclick="signup()">Sign up</button>
+              <button ype="submit" class="btn btn-default" name="signup">Sign up</button>
             </div>
             <div class="clearfix"></div>
             <div class="separator">
@@ -73,8 +82,8 @@
               <div class="clearfix"></div>
               <br/>
               <div>
-                <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
-                <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+                <h1><i class="fa fa-paw"></i> Sahaay </h1>
+                <p>©2016 All Rights Reserved. </p>
               </div>
             </div>
           </form>
