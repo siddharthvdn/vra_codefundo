@@ -6,7 +6,7 @@ Please follow the following steps before adding a new feature.
 Before you start adding a new feature make sure you do it in a new branch, and pull the latest master
 ```
 $ git checkout -b feature-name
-$ git clone origin master
+$ git pull origin master
 ```
 
 Make your changes, add files and commit.
