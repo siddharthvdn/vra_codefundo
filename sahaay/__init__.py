@@ -3,6 +3,8 @@ import os
 from flask import Flask
 from flask import render_template, request
 
+from pymongo import MongoClient
+
 def create_app(test_config=None):
     app = Flask(__name__,  instance_relative_config=True)
     app.config.from_mapping(
@@ -20,6 +22,11 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+        
+    
+    client = MongoClient()    
+    db = client["database"]
+    inventory = db["inventory"]
 
     # form to collect info
     @app.route('/', methods=['GET', 'POST'])
@@ -30,6 +37,13 @@ def create_app(test_config=None):
             
             print idx, qty
             
+            post = {"idx": idx, "qty": qty}
+            post_id = inventory.insert_one(post).inserted_id
+            
+            #print inventory.find(post_id)
+        
+            data = inventory.find_one({'_id': post_id})
+            print data
             
     	return render_template('inventory-update.html')
         
