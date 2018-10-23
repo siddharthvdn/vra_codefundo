@@ -10,19 +10,32 @@ bp = Blueprint('update', __name__, url_prefix='/update')
     
 @bp.route('/', methods=['GET', 'POST'])
 def update_inv():
-    inventory = db["inventory"]
 
     # form to collect info    
     if request.method == 'POST':
         idx = request.form['idx'] 
         qty = request.form['qty']
-        
+        qty = int(qty)
+
         print idx, qty
+
+        item = db.inventory.find_one({'user': g.user['username'], 'idx': idx})
         
-        post = {"idx": idx, "qty": qty}
-        post_id = inventory.insert_one(post).inserted_id
-    
-        data = inventory.find_one({'_id': post_id})
+        if item is not None:
+                qty = qty + item['qty']
+
+                if qty<0:
+                    # error = 'Quantity set to 0'
+                    # flash(error, "error")
+                    qty = 0
+
+        post = {'user': g.user['username'], 'idx': idx}
+
+        new_post = {'user': g.user['username'], 'idx': idx, 'qty': qty}
+
+        db.inventory.update(post, new_post, True)
+
+        data = db.inventory.find_one({'user': g.user['username'], 'idx': idx})
         print data
         
     return render_template('inventory-update.html')
