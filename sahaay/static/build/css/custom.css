@@ -3421,9 +3421,7 @@ a.hiddenanchor {
     width: 100%
 }
 .registration_form {
-    z-index: 21;
-    opacity: 0;
-    width: 100%
+    z-index: 22
 }
 .login_form {
     z-index: 22

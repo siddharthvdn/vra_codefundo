@@ -2,7 +2,7 @@
 # @Author: Kaushik S Kalmady
 # @Date:   2018-10-22 21:49:59
 # @Last Modified by:   kaushiksk
-# @Last Modified time: 2018-10-23 00:45:41
+# @Last Modified time: 2018-10-23 12:43:36
 import functools
 from flask import (
     Blueprint, flash, redirect, g, render_template, request, session, url_for
@@ -44,7 +44,7 @@ def register():
 
         flash(error)
 
-    return render_template('auth/login.html')
+    return render_template('auth/register.html')
 
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -67,7 +67,7 @@ def login():
             print user
             return redirect(url_for('interact.index'))
 
-        flash(error, "error")
+        flash(error)
 
     return render_template('auth/login.html')
 
