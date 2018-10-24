@@ -84,7 +84,7 @@ def request_resource():
                         'idx': idx,
                         'qty': qty,
                         'to':camps, 
-                        'donor':None, 
+                        'logs':None, 
                         'radius':5000, 
                         'ini_time':datetime.datetime.now(),
                         'last_time': datetime.datetime.now()
@@ -137,6 +137,8 @@ def accept_request():
 
         sup = min(sup, item['qty'])
 
+        log = g.user['username'] + ' supplied ' + str(sup) + ' units of' + item['idx']
+
         db.requests.update(
             {
                 '_id': _id
@@ -144,14 +146,7 @@ def accept_request():
             {'$set': 
                 {
                     'qty': item['qty'] - sup
-                    {$push : {'donor': 
-                                {
-                                    'user': g.user['username'], 
-                                    'sup': sup
-                                }
-                            }
-                    }
-
+                    {$push : {'logs': log} }
                 }
             }, upsert=False)
 
@@ -168,6 +163,30 @@ def accept_request():
 
         return jsonify({'supplied': sup})
 
+    return render_template('resource/accept.html')
+
+
+
+@bp.route('/reject', methods=['POST'])
+def reject_request():
+    if request.method == 'POST':
+        _id = request.json['id']
+
+        item = db.requests.find_one({'_id': _id})
+
+        log = g.user['username'] + ' rejected request for ' + str(sup) + ' units of' + item['idx']
+
+        db.requests.update(
+            {
+                '_id': _id
+            },
+            {'$set': 
+                {
+                    {$push : {'logs': log} }
+                }
+            }, upsert=False)       
+
+        return jsonify({'supplied': 0})
 
 
     return render_template('resource/accept.html')
