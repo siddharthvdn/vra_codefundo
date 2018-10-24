@@ -9,6 +9,14 @@
   <!-- Alertify -->
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/custom.alertify.css') }}" rel="stylesheet">
+  <style type="text/css">
+    #map {
+  height: 400px;
+  width: 100%;
+  margin: 15px;
+  background-color: grey;
+}
+  </style>
 {% endblock stylesheets %}
 
 {% block body_class %}login{% endblock body_class %}
@@ -17,28 +25,23 @@
 
   <div>
     <div class="login_wrapper">
-       <div id="register" class="animate form registration_form">
+       <div id="register" class="animate form reg_form">
               <section class="login_content">
               <form data-parsley-validate id="create-user-form" method="post" action="{{url_for('auth.register')}}">
-                  <h1>Create Account</h1>
-                  <label for="username">Username</label>
-                  <input class="form-control required" name="username" id="username" required>
-                  <label for="password">Password</label>
-                  <input class="form-control required" type="password" name="password" id="password" required>
+                  <h1>Add details</h1>
                   <label for="email">Email</label>
                   <input class="form-control required" type="email" name="email" id="email" required>
                   <label for="latitude">Latitude</label>
-                  <input class="form-control required" name="latitude" id="username" required>
+                  <input class="form-control required" name="latitude" id="latitude" required>
                   <label for="longitude">Longitude</label>
-                  <input class="form-control required" name="longitude" id="username" required>
+                  <input class="form-control required" name="longitude" id="longitude" required>
+                  <div id="map"></div>
+
                   <div>
                     <button ype="submit" class="btn btn-default" name="signup">Sign up</button>
                   </div>
                   <div class="clearfix"></div>
                   <div class="separator"> 
-                    <p class="change_link">Already a member ?
-                      <a href="{{url_for('auth.login')}}" id="login-button" class="to_register"> Log in </a>
-                    </p>
                     <div class="clearfix"></div>
                     <br/>
                     <div>
@@ -51,5 +54,12 @@
       </div>
     </div>
   </div>
-  
+
+{% block javascript %}
+  <script src="{{ url_for('static', filename='build/js/maphelper.js') }}"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{g.api_key}}&callback=initMap"
+  type="text/javascript"></script>
+
+
+{% endblock javascript %}
 {% endblock body %}
