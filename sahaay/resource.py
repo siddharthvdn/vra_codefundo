@@ -38,7 +38,7 @@ def repeat():
             db.requests.update_one(
                 {
                     '_id':looser['_id']
-                }
+                },
                 {'$set': 
                     {
                         'to': camps,
@@ -48,8 +48,8 @@ def repeat():
                 }, upsert=False)
 
     
-@bp.route('/', methods=['GET', 'POST'])
-def request_request():
+@bp.route('/request', methods=['GET', 'POST'])
+def request_resource():
 
     # form to collect info    
     if request.method == 'POST':
@@ -94,9 +94,38 @@ def request_request():
         db.requests.insert(request_post)
 
         
-    return render_template('request-resource.html')
+    return render_template('resource/request.html')
         
+@bp.route('/update', methods=['GET', 'POST'])
+def update_resource():
 
+    # form to collect info    
+    if request.method == 'POST':
+        idx = request.form['idx'] 
+        qty = request.form['qty']
+        qty = int(qty)
 
+        print idx, qty
+
+        item = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
+        
+        if item is not None:
+                qty = qty + item['qty']
+
+                if qty < 0:
+                    error = "Quantity cannot be negative"
+                    flash(error, "error")
+                    return render_template('resource/update.html')
+
+        post = {'username': g.user['username'], 'idx': idx}
+
+        new_post = {'username': g.user['username'], 'idx': idx, 'qty': qty}
+
+        db.inventory.update(post, new_post, True)
+
+        data = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
+        print data
+        
+    return render_template('resource/update.html')
 
 
