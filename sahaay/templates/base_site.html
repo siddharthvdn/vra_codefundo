@@ -54,6 +54,12 @@
 
           {% block content %}
             <!-- {{ content }} -->
+
+              <div class="col-md-7">
+              <h4 class="charthead"> Cateory-wise split</h4>
+              <canvas id="mypieChart" class="chartjs" width="undefined" height="undefined"></canvas>
+              </div>
+
           {% endblock content %}
 
           {% block footer %}
@@ -97,7 +103,7 @@
         <!-- starrr -->
         <script src="{{ url_for('static', filename='vendors/starrr/dist/starrr.js') }}"></script>
         
-{% endblock javascripts %}
+    {% endblock javascripts %}
       <!-- Custom Theme Scripts -->
       <script src="{{ url_for('static', filename='build/js/custom.js') }}"></script>
     {% endblock body %}
