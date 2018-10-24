@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, redirect, g, render_template, request, session, url_for
+    Blueprint, flash, jsonify, redirect, g, render_template, request, session, url_for
 )
 from config import mongo
 from pymongo import GEO2D
@@ -13,7 +13,7 @@ db = mongo["sahaay"]
 bp = Blueprint('resource', __name__, url_prefix='/resource')
 
 def repeat():
-    loosers = db.requests.find({'status':0})
+    loosers = db.requests.find({'qty':{$gt: 0} }})
 
     now = datetime.datetime.now()
 
@@ -84,7 +84,6 @@ def request_resource():
                         'idx': idx,
                         'qty': qty,
                         'to':camps, 
-                        'status':0, 
                         'donor':None, 
                         'radius':5000, 
                         'ini_time':datetime.datetime.now(),
@@ -128,4 +127,47 @@ def update_resource():
         
     return render_template('resource/update.html')
 
+@bp.route('/accept', methods=['POST'])
+def accept_request():
+    if request.method == 'POST':
+        _id = request.json['id']
+        sup = request.json['supply']
 
+        item = db.requests.find_one({'_id': _id})
+
+        sup = min(sup, item['qty'])
+
+        db.requests.update(
+            {
+                '_id': _id
+            },
+            {'$set': 
+                {
+                    'qty': item['qty'] - sup
+                    {$push : {'donor': 
+                                {
+                                    'user': g.user['username'], 
+                                    'sup': sup
+                                }
+                            }
+                    }
+
+                }
+            }, upsert=False)
+
+        db.inventory.update(
+            {
+                'username': g.user['username'],
+                'idx': item['idx']            
+            },
+            {'$inc':
+                {
+                    'qty': -sup
+                }
+            },  upsert=False)
+
+        return jsonify({'supplied': sup})
+
+
+
+    return render_template('resource/accept.html')
