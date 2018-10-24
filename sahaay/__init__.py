@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 
 def create_app(test_config=None):
     app = Flask(__name__,  instance_relative_config=True)
@@ -20,10 +20,11 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    from . import auth, interact
+    
+    from . import auth, interact, resource
     app.register_blueprint(auth.bp)
     app.register_blueprint(interact.bp)
+    app.register_blueprint(resource.bp)
     
     from . import config
     config.init_app(app)

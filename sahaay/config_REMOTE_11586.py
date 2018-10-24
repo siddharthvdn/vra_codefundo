@@ -33,4 +33,3 @@ def init_app(app):
 def get_maps_api_key():
 	with open(os.path.join(PROJECT_ROOT, "credentials/gmap-api-key.txt")) as f:
 		return f.read().strip()
-
