@@ -14,21 +14,12 @@
 {% block body_class %}login{% endblock body_class %}
 
 {% block body %}
-  <!-- jQuery -->
-  <script src="{{ url_for('static', filename='vendors/jquery/dist/jquery.min.js') }}"></script>
-  <!-- Alertify -->
-  <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
-  <!-- Parsley -->
-  <script src="{{ url_for('static', filename='vendors/parsleyjs/dist/parsley.min.js') }}"></script>
-  <!-- Login -->
-  <script src="{{ url_for('static', filename='build/js/login.js') }}"></script>
+
   <div>
-    <a class="hiddenanchor" id="signup"></a>
-    <a class="hiddenanchor" id="signin"></a>
     <div class="login_wrapper">
       <div class="animate form login_form">
         <section class="login_content">
-          <form data-parsley-validate method="post" action="/auth/login">
+          <form data-parsley-validate method="post" action="{{url_for('auth.login')}}">
             <h1>Login Form</h1>
               <div>
                
@@ -45,7 +36,7 @@
             <div class="clearfix"></div>
             <div class="separator">
               <p class="change_link">Not registered yet?
-                <a href="#signup" class="to_register"> Create Account </a>
+                <a href="{{url_for('auth.register')}}" class="to_register"> Create Account </a>
               </p>
               <div class="clearfix"></div>
               <br/>
@@ -57,39 +48,7 @@
           </form>
         </section>
       </div>
-      <div id="register" class="animate form registration_form">
-        <section class="login_content">
-        <form data-parsley-validate id="create-user-form" method="post" action="/auth/register">
-            <h1>Create Account</h1>
-            <label for="username">Username</label>
-            <input class="form-control required" name="username" id="username" required>
-            <label for="password">Password</label>
-            <input class="form-control required" type="password" name="password" id="password" required>
-            <label for="email">Email</label>
-            <input class="form-control required" type="email" name="email" id="email" required>
-            <label for="latitude">Latitude</label>
-            <input class="form-control required" name="latitude" id="username" required>
-            <label for="longitude">Longitude</label>
-            <input class="form-control required" name="longitude" id="username" required>
-            <div>
-              <button ype="submit" class="btn btn-default" name="signup">Sign up</button>
-            </div>
-            <div class="clearfix"></div>
-            <div class="separator">
-              <p class="change_link">Already a member ?
-                <a href="#signin" id="login-button" class="to_register"> Log in </a>
-              </p>
-              <div class="clearfix"></div>
-              <br/>
-              <div>
-                <h1><i class="fa fa-paw"></i> Sahaay </h1>
-                <p>©2016 All Rights Reserved. </p>
-              </div>
-            </div>
-          </form>
-        </section>
-      </div>
+
     </div>
   </div>
 {% endblock body %}
-

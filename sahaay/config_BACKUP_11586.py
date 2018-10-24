@@ -9,6 +9,11 @@ from flask.cli import with_appcontext
 import json
 import os
 
+<<<<<<< HEAD
+mongo = MongoClient('mongodb://localhost:27017/')
+||||||| merged common ancestors
+mongo = MongoClient('mongodb://localhost:27017/')
+=======
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 mongo = MongoClient('mongodb://localhost:27017/')
 
@@ -33,4 +38,4 @@ def init_app(app):
 def get_maps_api_key():
 	with open(os.path.join(PROJECT_ROOT, "credentials/gmap-api-key.txt")) as f:
 		return f.read().strip()
-
+>>>>>>> f19868c5ccb73c4251bd61f3a1745648e5a9eb68
