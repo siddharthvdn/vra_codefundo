@@ -9,7 +9,7 @@ bp = Blueprint('update', __name__, url_prefix='/update')
 
     
 @bp.route('/', methods=['GET', 'POST'])
-def update_inv():
+def update_inventory():
 
     # form to collect info    
     if request.method == 'POST':
@@ -19,7 +19,7 @@ def update_inv():
 
         print idx, qty
 
-        item = db.inventory.find_one({'user': g.user['username'], 'idx': idx})
+        item = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         
         if item is not None:
                 qty = qty + item['qty']
@@ -29,14 +29,14 @@ def update_inv():
                     # flash(error, "error")
                     qty = 0
 
-        post = {'user': g.user['username'], 'idx': idx}
+        post = {'username': g.user['username'], 'idx': idx}
 
-        new_post = {'user': g.user['username'], 'idx': idx, 'qty': qty}
+        new_post = {'username': g.user['username'], 'idx': idx, 'qty': qty}
 
         db.inventory.update(post, new_post, True)
 
-        data = db.inventory.find_one({'user': g.user['username'], 'idx': idx})
+        data = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         print data
         
-    return render_template('inventory-update.html')
+    return render_template('update-inventory.html')
         

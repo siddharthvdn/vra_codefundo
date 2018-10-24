@@ -21,9 +21,10 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    from . import auth, interact, update
+    from . import auth, interact, update, resource
     app.register_blueprint(auth.bp)
     app.register_blueprint(interact.bp)
     app.register_blueprint(update.bp)
+    app.register_blueprint(resource.bp)
     
     return app
