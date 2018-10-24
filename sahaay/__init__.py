@@ -25,4 +25,6 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     app.register_blueprint(interact.bp)
     
+    from . import config
+    config.init_app(app)
     return app
