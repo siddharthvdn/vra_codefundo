@@ -106,14 +106,14 @@ def update_resource():
         qty = int(qty)
 
         print idx, qty
-
+        #print g.user["username"], session["username"]
         item = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         
         if item is not None:
                 qty = qty + item['qty']
 
                 if qty < 0:
-                    error = "Quantity cannot be negative"
+                    error = "You have only {} items of this type".format(item['qty'])
                     flash(error, "error")
                     return render_template('resource/update.html')
 
@@ -125,6 +125,8 @@ def update_resource():
 
         data = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         print data
+
+        flash("Inventory updated successfuly!", "success")
         
     return render_template('resource/update.html')
 
