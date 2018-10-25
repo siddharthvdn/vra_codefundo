@@ -2,7 +2,7 @@
 * @Author: kaushiksk
 * @Date:   2018-10-23 14:23:28
 * @Last Modified by:   kaushiksk
-* @Last Modified time: 2018-10-23 15:07:14
+* @Last Modified time: 2018-10-24 23:19:13
 */
 
 function initMap() {
@@ -54,6 +54,56 @@ function initMap() {
     } else {
         document.getElementById('map').innerHTML = 'No Geolocation Support.';
     }
+
+
+}
+
+
+function initLocalMap() {
+    
+        var map;
+    
+        var mapOptions = {
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        $.ajax({
+          url: '/get-local-map-data',
+          dataType: 'json',
+        }).done(function(positions) {           
+
+        positions.forEach(function(element){
+            var geolocate = new google.maps.LatLng(element["location"][1], element["location"][0]);
+            var marker = new google.maps.Marker({
+                        position: geolocate,
+                        map: map
+                      });
+            console.log(element);
+
+            var infowindow = new google.maps.InfoWindow();
+
+            google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+                    return function() {
+                       infowindow.setContent(content);
+                       infowindow.open(map,marker);
+                    };
+                })(marker,element["username"],infowindow));
+
+            if(element["username"] == "{{g.user['username']}}"){
+                map.setCenter(geolocate);
+            } 
+
+        });
+    
+
+        console.log("Map Drawn!");
+
+
+        });
+        
 
 
 }

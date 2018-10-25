@@ -2,7 +2,7 @@
 # @Author: Kaushik S Kalmady
 # @Date:   2018-10-22 21:49:59
 # @Last Modified by:   kaushiksk
-# @Last Modified time: 2018-10-24 11:38:04
+# @Last Modified time: 2018-10-24 22:27:00
 import functools
 from flask import (
     Blueprint, flash, redirect, g, render_template, request, session, url_for
@@ -19,8 +19,8 @@ def register():
     if request.method == 'POST':
         username = session["username"]
         email = request.form['email']
-        longitude = request.form['longitude']
-        latitude = request.form['latitude']
+        longitude = float(request.form['longitude'])
+        latitude = float(request.form['latitude'])
         
         error = None
 
@@ -32,7 +32,7 @@ def register():
         if error is None:
             user_data = {'username': username,
                          'email': email,
-                         'loc': [longitude, latitude]}
+                         'location': [longitude, latitude]}
 
             db.users.insert(user_data)
 

@@ -1,0 +1,245 @@
+{% extends "base_site.html" %}
+
+{% block title %} Plain Page {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style type="text/css">
+    #map {
+      height: 400px;
+      width: 100%;
+      margin: 15px;
+      background-color: grey;
+    }
+
+    .message-item{
+      text-align:center;
+      margin: 10px;
+      border-left: 6px solid #93adc6;
+      background-color: #EDEDED;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color:#2A3F54;
+    }
+
+    .request-item{
+      text-align:center;
+      margin: 10px;
+      border-left: 6px solid #2A3F54 ;
+      background-color: #93adc6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color:#2A3F54;
+    }
+
+    .details-button{
+      background-color: #2A3F54;
+      color: white;
+      border-radius: 5px;
+      border-color:  #2A3F54;
+    }
+
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+      <div class="">
+        <div class="page-title">
+          <div class="title_left">
+            <!--<h3>{{g.user['username']}}'s details</h3>-->
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+               <div class="x_title">
+                <h2>Dashboard</h2>
+        
+              <div class="clearfix"></div>
+            </div>
+              <div class="x_content">
+                  <div  style="text-align:center; " class="col-md-5">
+                    <h3 style="margin:auto; vertical-align: middle" class="charthead"> Message Board </h3>
+                    <div class="clearfix"></div>
+                    <div id="message-board">
+                      {% for order in orders %}
+                        <div class="row message-item" style="text-align:center">
+                          <div style="margin:auto; vertical-align: middle" class="col-md-8">
+                            <strong> {{ order['from'] }}</strong> requires <strong>{{ order['qty'] }} </strong>items of <strong>{{ order['idx'] }}</strong> 
+                          </div>
+                          <div class="col-md-4">
+                            <button style="margin:auto; vertical-align: middle"  onclick="location.href='/resource/order-summary/{{order['_id']}}'" class="details-button" type="button">Details</button>
+                          </div>
+                          <hr>
+                        </div>
+                      {% endfor %}
+
+                    </div>
+                  </div>
+
+                  <div style="text-align:center; position: absolute; right:0;" class="col-md-5">
+                    <h3 style="margin:auto; vertical-align: middle" class="charthead"> Pending Requests </h3>
+                   <div id="request-board">
+                     {% for req in requests %}
+                        <div class="row request-item" style="text-align:center">
+                          <div style="margin:auto; vertical-align: middle" class="col-md-8">
+                            Requested <strong>{{ req['qty'] }} </strong>items of <strong>{{ req['idx'] }}</strong> 
+                          </div>
+                          <div class="col-md-4">
+                            <button style="margin:auto; vertical-align: middle"  onclick="location.href='/resource/order-summary/{{req['_id']}}'" class="details-button req-button" type="button">Details</button>
+                          </div>
+                          <hr>
+                        </div>
+                      {% endfor %}
+
+                   </div>
+                  </div>
+
+
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+             
+                 
+              <div class="x_content">
+                  <div style="text-align:center;" class="col-md-7">
+                    <h3 style="margin:auto; vertical-align: middle" class="charthead"> Inventory </h3>
+                    <canvas id="mypieChart" class="chartjs" width="undefined" height="undefined"></canvas>
+                  </div>
+
+                  <div style="text-align:center;" class="col-md-5">
+                    <h3 style="margin:auto; vertical-align: middle" class="charthead"> Nearby Relief Centers </h3>
+                   <div id="map"></div>
+                  </div>
+
+
+              </div>
+
+            </div>
+          </div>
+
+          
+        </div>
+
+
+      </div>
+    </div>
+  <div class="row">
+    
+
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+  <script src="{{ url_for('static', filename='vendors/Chart.js/dist/Chart.min.js') }}"></script>
+     <script>
+    function initLocalMap() {
+    
+        var map;
+    
+        var mapOptions = {
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        $.ajax({
+          url: '/get-local-map-data',
+          dataType: 'json',
+        }).done(function(positions) {           
+
+        positions.forEach(function(element){
+            var geolocate = new google.maps.LatLng(element["location"][1], element["location"][0]);
+            var marker = new google.maps.Marker({
+                        position: geolocate,
+                        map: map
+                      });
+            console.log(element);
+
+            var infowindow = new google.maps.InfoWindow();
+
+            google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+                    return function() {
+                       infowindow.setContent(content);
+                       infowindow.open(map,marker);
+                    };
+                })(marker,element["username"],infowindow));
+
+            if(element["username"] == "{{g.user['username']}}"){
+                map.setCenter(geolocate);
+            } 
+
+        });
+    
+
+        console.log("Map Drawn!");
+
+
+        });
+        
+
+
+}
+    
+   </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{g.api_key}}&callback=initLocalMap"
+  type="text/javascript"></script>
+  <script> 
+
+    var ctx = document.getElementById("mypieChart").getContext("2d");
+
+
+    var randomColorFactor = function() {
+            return Math.round(Math.random() * 255);
+        };
+
+    var randomColor = function(opacity) {
+        return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
+    };
+
+    $.ajax({
+      url: '/get-pie-data',
+      dataType: 'json',
+    }).done(function (results) {
+
+    var labels = [], data=[];
+   // console.log(results);
+
+    results["data"].forEach(function(entry){
+        labels.push(entry["idx"]);
+        data.push(entry["qty"]);
+      });
+
+    var colors = []
+
+    for(i=0; i<labels.length; i++){
+      colors.push(randomColor(0.8));
+    }
+    var tempData = {labels: labels,
+            datasets:[
+            {"data":data,
+            "label":"Category wise Split",
+            "backgroundColor":colors}
+            ]
+          };
+
+    //console.log(tempData);
+    var myChart = new Chart(ctx,{type:"doughnut", data:tempData});
+          });
+    console.log("Chart drawn!");
+  </script>
+{% endblock javascripts %}
+

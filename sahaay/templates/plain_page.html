@@ -4,64 +4,76 @@
 
 {% block stylesheets %}
   {{ super() }}
+  <style type="text/css">
+    #map {
+      height: 400px;
+      width: 500px;
+      margin: 15px;
+      background-color: grey;
+    }
+  </style>
 {% endblock stylesheets %}
+{% block body_class %}login{% endblock body_class %}
+{% block body %}
 
-{% block content %}
-    <div class="right_col" role="main">
-      <div class="">
-        <div class="page-title">
-          <div class="title_left">
-            <h3>Plain Page</h3>
-          </div>
 
-          <div class="title_right">
-            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Go!</button>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="row">
-          <div class="col-md-12 col-sm-12 col-xs-12">
-            <div class="x_panel">
-              <div class="x_title">
-                <h2>Plain Page</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                  </li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">Settings 1</a>
-                      </li>
-                      <li><a href="#">Settings 2</a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li><a class="close-link"><i class="fa fa-close"></i></a>
-                  </li>
-                </ul>
-                <div class="clearfix"></div>
-              </div>
-              <div class="x_content">
-                Plain Page
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-{% endblock content %}
+    <div id="map"></div>
 
 {% block javascripts %}
   {{ super() }}
+   <script>
+   	function initLocalMap() {
+    
+        var map;
+    
+        var mapOptions = {
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        $.ajax({
+          url: '/get-local-map-data',
+          dataType: 'json',
+        }).done(function(positions) {           
+
+        positions.forEach(function(element){
+            var geolocate = new google.maps.LatLng(element["location"][1], element["location"][0]);
+            var marker = new google.maps.Marker({
+                        position: geolocate,
+                        map: map
+                      });
+            console.log(element);
+
+            var infowindow = new google.maps.InfoWindow();
+
+            google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+                    return function() {
+                       infowindow.setContent(content);
+                       infowindow.open(map,marker);
+                    };
+                })(marker,element["username"],infowindow));
+
+            if(element["username"] == "{{g.user['username']}}"){
+                map.setCenter(geolocate);
+            } 
+
+        });
+    
+
+        console.log("Map Drawn!");
+
+
+        });
+        
+
+
+}
+   	
+   </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{g.api_key}}&callback=initLocalMap"
+  type="text/javascript"></script>
 {% endblock javascripts %}
 
+{% endblock body %}
