@@ -79,7 +79,7 @@ def request_resource():
                 
                 if current is not None and current['qty'] > qty:
                     #send request to this camp
-                    camps.append(current['user'])
+                    camps.append(current['username'])
                     print current['username']
 
         request_post = {'from':g.user['username'], 
@@ -178,6 +178,28 @@ def reject_request():
             upsert=False)       
 
         return jsonify({'supplied': 0})
+
+@bp.route('/terminate', methods=['POST'])
+def terminate_request():
+    if request.method == 'POST':
+
+        _id = request.form['_id']
+
+        item = db.requests.find_one({'_id': ObjectId(_id)})
+
+        log = g.user['username'] + ' terminated the request' 
+
+        db.requests.update(
+            {'_id': ObjectId(_id)},
+            {'$push' : {'logs': log} }, 
+            upsert=False)  
+
+        db.requests.update(
+            {'_id': ObjectId(_id)},
+            {'$set': {'qty': 0}}, 
+            upsert=False)  
+
+        return jsonify({'supplied': 1})
 
 @bp.route('/order-summary/<order_id>', methods=['GET'])
 def order_summary(order_id):
