@@ -88,7 +88,7 @@ def request_resource():
                         'idx': idx,
                         'qty': qty,
                         'to':camps, 
-                        'logs':None, 
+                        'logs':[], 
                         'radius':5000, 
                         'ini_time':datetime.datetime.now(),
                         'last_time': datetime.datetime.now()
