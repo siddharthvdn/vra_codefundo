@@ -8,6 +8,8 @@ from bson.son import SON
 from bson import ObjectId
 import datetime
 
+from .config import SUPPLIES
+
 db = mongo["sahaay"]
 
 bp = Blueprint('resource', __name__, url_prefix='/resource')
@@ -96,7 +98,7 @@ def request_resource():
         db.requests.insert(request_post)
 
         
-    return render_template('resource/request.html')
+    return render_template('resource/request.html', supply=SUPPLIES)
         
 @bp.route('/update', methods=['GET', 'POST'])
 def update_resource():
@@ -131,7 +133,7 @@ def update_resource():
         flash("Inventory updated successfuly!", "success")
         
 
-    return render_template('resource/update.html')
+    return render_template('resource/update.html', supply=SUPPLIES)
 
 @bp.route('/accept', methods=['POST'])
 def accept_request():
