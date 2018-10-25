@@ -55,7 +55,7 @@
                         <div class="row request-item" >
                           <div class="col-md-8">
                             <div><strong>#{{req["_id"]}}</strong> | {{req['ini_time']}}  </div>
-                            <div>Requested <strong>{{ req['qty'] }} </strong>items of <strong>{{ req['idx'] }}</strong> </div>
+                            <div>Requested <strong>{{ req['ini_qty'] }} </strong>items of <strong>{{ req['idx'] }}</strong> </div>
                           </div>
                           <div class="col-md-4">
                             <button  onclick="location.href='/resource/order-summary/{{req['_id']}}'" class="details-button req-button" type="button">Details</button>

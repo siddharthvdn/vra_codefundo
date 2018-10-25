@@ -19,6 +19,7 @@ def init_db_command():
     mongo.sahaay.users.drop()
     mongo.sahaay.login.drop()
     mongo.sahaay.inventory.drop()
+    mongo.sahaay.requests.drop()
     with open(os.path.join(PROJECT_ROOT, "credentials/login_credentials.json")) as f:
     	data = json.load(f)
 

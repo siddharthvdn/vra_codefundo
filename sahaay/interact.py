@@ -9,8 +9,8 @@ from flask import (
     Blueprint, flash, jsonify, redirect, g, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from config import mongo
-from auth import login_required
+from .config import mongo
+from .auth import login_required
 from bson.son import SON
 from pymongo import GEO2D
 from operator import itemgetter

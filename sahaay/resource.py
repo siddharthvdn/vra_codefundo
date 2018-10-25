@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, flash, jsonify, redirect, g, render_template, request, session, url_for
 )
-from config import mongo
+from .config import mongo
 from pymongo import GEO2D
 
 from bson.son import SON 
@@ -153,9 +153,9 @@ def accept_request():
         db.requests.update(
             {'_id': ObjectId(_id)},
             {'$set': {
-                        'qty': item['qty'] - sup},
+                        'qty': item['qty'] - sup,
                         'last_time': datetime.datetime.now()
-                    }, 
+                    }}, 
             upsert=False)
 
         db.requests.update(
@@ -227,7 +227,7 @@ def order_summary(order_id):
 def getmyrequests():
     username = g.user['username']
     requests = list(db.requests.find({"from": username}))
-    requests.sort(key=itemgetter("ini_time"), reverse=True)
+    #requests.sort(key=itemgetter("ini_time"), reverse=True)
     for req in requests:
         req["_id"] = str(req["_id"])
 
