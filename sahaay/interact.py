@@ -2,7 +2,7 @@
 # @Author: Kaushik S Kalmady
 # @Date:   2018-10-23 00:13:02
 # @Last Modified by:   kaushiksk
-# @Last Modified time: 2018-10-25 14:27:47
+# @Last Modified time: 2018-10-25 22:43:47
 
 import functools
 from flask import (
@@ -13,6 +13,7 @@ from config import mongo
 from auth import login_required
 from bson.son import SON
 from pymongo import GEO2D
+from operator import itemgetter
 
 bp = Blueprint('interact', __name__, url_prefix='/')
 db = mongo["sahaay"]
@@ -23,6 +24,8 @@ def index():
     username = g.user["username"]
     orders = list(db.requests.find({"to": username, "qty":{"$gt" : 0}}))
     requests = list(db.requests.find({"from": username, "qty":{"$gt" : 0}}))
+    orders.sort(key=itemgetter("ini_time"), reverse=True)
+    requests.sort(key=itemgetter("ini_time"), reverse=True)
     return render_template('dashboard.html', user=g.user, orders=orders, requests=requests)
 
 @bp.route('/get-pie-data', methods=['GET'])
@@ -31,7 +34,7 @@ def getpiedata():
     username = g.user["username"]
     items = list(db.inventory.find({"username": username}, {'_id': False}))
 
-    print items
+    #print items
     return jsonify({"data": items})
 
 
@@ -45,7 +48,7 @@ def getmapdata():
     query = {"location": SON([("$near", curUser['location'])])}
     localSites = list(db.users.find(query, {'_id': False}).limit(10))
 
-    print localSites
+    #print localSites
     return jsonify(localSites)
 
 @bp.route('/test')
