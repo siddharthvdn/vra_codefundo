@@ -12,6 +12,8 @@ import os
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 mongo = MongoClient('mongodb://localhost:27017/')
 
+db = mongo['sahaay']
+
 @click.command('init-db')
 @with_appcontext
 def init_db_command():

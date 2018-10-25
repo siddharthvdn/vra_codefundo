@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, flash, jsonify, redirect, g, render_template, request, session, url_for
 )
-from .config import mongo
+from .config import db
 from pymongo import GEO2D
 
 from bson.son import SON 
@@ -11,7 +11,6 @@ from operator import itemgetter
 
 from .config import SUPPLIES
 
-db = mongo["sahaay"]
 
 bp = Blueprint('resource', __name__, url_prefix='/resource')
 
@@ -189,7 +188,7 @@ def reject_request():
             {'$push' : {'logs': log} }, 
             upsert=False)       
 
-        return redirect(url_for(interact.index))
+        return redirect(url_for("interact.index"))
 
 @bp.route('/terminate', methods=['POST'])
 def terminate_request():
