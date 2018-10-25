@@ -8,7 +8,7 @@ from flask import (
     Blueprint, flash, redirect, g, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from config import mongo
+from .config import mongo
 
 db = mongo["sahaay"]
 
