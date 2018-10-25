@@ -7,6 +7,7 @@ from pymongo import GEO2D
 from bson.son import SON 
 from bson import ObjectId
 import datetime
+from operator import itemgetter
 
 from .config import SUPPLIES
 
@@ -89,7 +90,7 @@ def request_resource():
                         'idx': idx,
                         'qty': qty,
                         'to':camps, 
-                        'logs':None, 
+                        'logs':[], 
                         'radius':5000, 
                         'ini_time':datetime.datetime.now(),
                         'last_time': datetime.datetime.now()
@@ -212,5 +213,14 @@ def order_summary(order_id):
     item = db.requests.find_one({'_id': ObjectId(order_id)})
 
     item['_id'] = str(item['_id'])
-
+    print item
     return render_template('resource/order-summary.html', item=item)
+
+@bp.route('/myrequests')
+def getmyrequests():
+    username = g.user['username']
+    requests = list(db.requests.find({"from": username}))
+    requests.sort(key=itemgetter("ini_time"), reverse=True)
+    for req in requests:
+        req["_id"] = str(req["_id"])
+    return render_template("resource/myrequests.html", requests=requests)
