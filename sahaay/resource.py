@@ -77,7 +77,7 @@ def request_resource():
             
             if current is not None and current['qty'] > qty:
                 #send request to this camp
-                camps.append(current['user'])
+                camps.append(current['username'])
                 print current['username']
 
         request_post = {'from':g.user['username'], 
