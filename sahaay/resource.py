@@ -1,13 +1,15 @@
 from flask import (
     Blueprint, flash, jsonify, redirect, g, render_template, request, session, url_for
 )
-from config import mongo
+from .config import mongo
 from pymongo import GEO2D
 
 from bson.son import SON 
 from bson import ObjectId
 import datetime
 from operator import itemgetter
+
+from .config import SUPPLIES
 
 db = mongo["sahaay"]
 
@@ -99,7 +101,7 @@ def request_resource():
         return redirect('resource/order-summary/{}'.format(id_))
 
         
-    return render_template('resource/request.html')
+    return render_template('resource/request.html', supply=SUPPLIES)
         
 @bp.route('/update', methods=['GET', 'POST'])
 def update_resource():
@@ -134,7 +136,7 @@ def update_resource():
         flash("Inventory updated successfuly!", "success")
         
 
-    return render_template('resource/update.html')
+    return render_template('resource/update.html', supply=SUPPLIES)
 
 @bp.route('/accept', methods=['POST'])
 def accept_request():
@@ -151,9 +153,9 @@ def accept_request():
         db.requests.update(
             {'_id': ObjectId(_id)},
             {'$set': {
-                        'qty': item['qty'] - sup},
+                        'qty': item['qty'] - sup,
                         'last_time': datetime.datetime.now()
-                    }, 
+                    }}, 
             upsert=False)
 
         db.requests.update(
@@ -225,7 +227,7 @@ def order_summary(order_id):
 def getmyrequests():
     username = g.user['username']
     requests = list(db.requests.find({"from": username}))
-    requests.sort(key=itemgetter("ini_time"), reverse=True)
+    #requests.sort(key=itemgetter("ini_time"), reverse=True)
     for req in requests:
         req["_id"] = str(req["_id"])
 

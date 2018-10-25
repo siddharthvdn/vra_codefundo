@@ -40,10 +40,11 @@
                       <label for="idx">Resource ID</label>
                       <!--<input type="text" id="idx" name="idx">-->
                       <select class="form-control required" id="idx" name="idx">
-                      <option value="water">Water</option>
-                      <option value="cloth">Cloth</option>
-                      <option value="napkin">Napkin</option>
-                      <option value="medicine">Medicine</option>
+
+                        {% for item in supply%}
+                          <option value={{item['idx']}}>{{item['idx']}}</option>
+                        {% endfor %}
+                        
                       </select>
                     </div>
 

@@ -19,6 +19,7 @@ def init_db_command():
     mongo.sahaay.users.drop()
     mongo.sahaay.login.drop()
     mongo.sahaay.inventory.drop()
+    mongo.sahaay.requests.drop()
     with open(os.path.join(PROJECT_ROOT, "credentials/login_credentials.json")) as f:
     	data = json.load(f)
 
@@ -27,7 +28,7 @@ def init_db_command():
 
     mongo.sahaay.login.create_index([("username", DESCENDING)])
     mongo.sahaay.users.create_index([('location', GEO2D)])
-    click.echo('Initialized the database.')	
+    click.echo('Initialized the database.')	    
 
 def init_app(app):
     app.cli.add_command(init_db_command)
@@ -35,4 +36,7 @@ def init_app(app):
 def get_maps_api_key():
 	with open(os.path.join(PROJECT_ROOT, "credentials/gmap-api-key.txt")) as f:
 		return f.read().strip()
+
+with open(os.path.join(PROJECT_ROOT, "credentials/supplies_list.json")) as f:
+    SUPPLIES = json.load(f)
 
