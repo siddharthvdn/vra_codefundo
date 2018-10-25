@@ -2,7 +2,7 @@
 # @Author: Kaushik S Kalmady
 # @Date:   2018-10-22 21:49:59
 # @Last Modified by:   kaushiksk
-# @Last Modified time: 2018-10-24 22:27:00
+# @Last Modified time: 2018-10-25 22:43:16
 import functools
 from flask import (
     Blueprint, flash, redirect, g, render_template, request, session, url_for
@@ -70,7 +70,6 @@ def login():
             session['username'] = user['username']
             flash("Welcome {}!".format(user['username']), "success")
 
-            print 
             if not user["verified"]:
                 return render_template('auth/register.html') 
                 
@@ -103,7 +102,6 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
-
         return view(**kwargs)
 
     return wrapped_view

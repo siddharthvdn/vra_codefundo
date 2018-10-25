@@ -28,18 +28,18 @@ def repeat():
 
             query = {"location": SON([("$near", current['location']), ("$minDistance", looser['radius']), ("$maxDistance", looser['radius']+5000)])}
             neighbours = list(db.users.find(query))
-            print neighbours
+            #print neighbours
             
             camps = looser['to']
             for neighbour in neighbours: 
                 if not neighbour['username'] == looser['from']:  
-                    print neighbour['username']         
+                    #print neighbour['username']         
                     current = db.inventory.find_one({'username': neighbour['username'], 'idx': looser['idx']})
                     
                     if current is not None and current['qty'] > looser['qty']:
                         #send request to this camp
-                        camps.append(current['user'])
-                        print current['username']   
+                        camps.append(current['username'])
+                        #print current['username']   
 
             db.requests.update(
                 {
@@ -48,8 +48,7 @@ def repeat():
                 {'$set': 
                     {
                         'to': camps,
-                        'radius': looser['radius'] + 5000,
-                        'last_time': datetime.datetime.now()
+                        'radius': looser['radius'] + 5000                        
                     }
                 }, upsert=False)
 
@@ -63,7 +62,7 @@ def request_resource():
         qty = int(request.form['qty'])
 
         
-        print idx, qty
+        #print idx, qty
         post = {'username':g.user['username'], 'idx': idx }
         
         item = db.users.find_one({'username': g.user['username']})
@@ -71,24 +70,25 @@ def request_resource():
         # db.users.create_index([('location', GEO2D)])
         #neighbours = list(db.users.find({'location': {"$near": item['location']}}).limit(3))
         query = {"location": SON([("$near", item['location']), ("$minDistance", 0), ("$maxDistance", 5000)])}
-        neighbours = list(db.users.find())
-        print neighbours
+        neighbours = list(db.users.find(query))
+        #print neighbours
         
         camps = []
         for neighbour in neighbours:   
             if not neighbour['username'] == g.user['username']:
-                print neighbour['username']         
+                #print neighbour['username']         
                 current = db.inventory.find_one({'username': neighbour['username'], 'idx': idx})
                 
                 if current is not None and current['qty'] > qty:
                     #send request to this camp
                     camps.append(current['username'])
-                    print current['username']
+                    #print current['username']
 
 
         request_post = {'from':g.user['username'], 
                         'idx': idx,
                         'qty': qty,
+                        'ini_qty': qty,
                         'to':camps, 
                         'logs':[], 
                         'radius':5000, 
@@ -96,7 +96,9 @@ def request_resource():
                         'last_time': datetime.datetime.now()
                         }
 
-        db.requests.insert(request_post)
+        id_ = db.requests.insert(request_post)
+
+        return redirect('resource/order-summary/{}'.format(id_))
 
         
     return render_template('resource/request.html', supply=SUPPLIES)
@@ -110,7 +112,7 @@ def update_resource():
         qty = request.form['qty']
         qty = int(qty)
 
-        print idx, qty
+        #print idx, qty
         #print g.user["username"], session["username"]
         item = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         
@@ -129,7 +131,7 @@ def update_resource():
         db.inventory.update(post, new_post, True)
 
         data = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
-        print data
+        #print data
 
         flash("Inventory updated successfuly!", "success")
         
@@ -140,7 +142,7 @@ def update_resource():
 def accept_request():
     if request.method == 'POST':
         _id = request.form['_id']
-        sup = request.form['supply']
+        sup = int(request.form['supply'])
 
         item = db.requests.find_one({'_id': ObjectId(_id)})
 
@@ -150,7 +152,10 @@ def accept_request():
 
         db.requests.update(
             {'_id': ObjectId(_id)},
-            {'$set': {'qty': item['qty'] - sup}}, 
+            {'$set': {
+                        'qty': item['qty'] - sup},
+                        'last_time': datetime.datetime.now()
+                    }, 
             upsert=False)
 
         db.requests.update(
@@ -166,7 +171,7 @@ def accept_request():
             {'$inc': {'qty': -sup}},  
             upsert=False)
 
-        return jsonify({'supplied': sup})
+        return redirect('/resource/order-summary/{}'.format(_id))
 
 
 @bp.route('/reject', methods=['POST'])
@@ -184,7 +189,7 @@ def reject_request():
             {'$push' : {'logs': log} }, 
             upsert=False)       
 
-        return jsonify({'supplied': 0})
+        return redirect(url_for(interact.index))
 
 @bp.route('/terminate', methods=['POST'])
 def terminate_request():
@@ -206,15 +211,17 @@ def terminate_request():
             {'$set': {'qty': 0}}, 
             upsert=False)  
 
-        return jsonify({'supplied': 1})
+        return redirect(url_for("interact.index"))
 
 @bp.route('/order-summary/<order_id>', methods=['GET'])
 def order_summary(order_id):
     item = db.requests.find_one({'_id': ObjectId(order_id)})
 
     item['_id'] = str(item['_id'])
-    print item
-    return render_template('resource/order-summary.html', item=item)
+    #print item
+    curUserLoc = db.users.find_one({"username": g.user["username"]})["location"]
+    fromUserLoc = db.users.find_one({"username": item["from"]})["location"]
+    return render_template('resource/order-summary.html', item=item, source=curUserLoc, dest=fromUserLoc)
 
 @bp.route('/myrequests')
 def getmyrequests():
@@ -223,4 +230,5 @@ def getmyrequests():
     requests.sort(key=itemgetter("ini_time"), reverse=True)
     for req in requests:
         req["_id"] = str(req["_id"])
+
     return render_template("resource/myrequests.html", requests=requests)
