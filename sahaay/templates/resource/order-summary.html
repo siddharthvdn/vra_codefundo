@@ -4,6 +4,29 @@
 
 {% block stylesheets %}
   {{ super() }}
+    <style type="text/css">
+    #map {
+  height: 400px;
+  width: 100%;
+  margin: 15px;
+  background-color: grey;
+}
+  </style>
+
+  <style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+
+</style>
 {% endblock stylesheets %}
 
 {% block content %}
@@ -11,18 +34,11 @@
       <div class="">
         <div class="page-title">
           <div class="title_left">
-            <h3>Plain Page</h3>
+
           </div>
 
           <div class="title_right">
-            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Go!</button>
-                </span>
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -36,17 +52,8 @@
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">Settings 1</a>
-                      </li>
-                      <li><a href="#">Settings 2</a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li><a class="close-link"><i class="fa fa-close"></i></a>
-                  </li>
+
+
                 </ul>
                 <div class="clearfix"></div>
               </div>
@@ -57,24 +64,38 @@
 
                     <hr>
 
-                    {% if not item['from']==g.user['username'] and item['qty'] > 0 %}
-                    <h5 >{{item['from']}} requests for {{item['qty']}} units of {{item['idx']}}</h5>
-                    <hr>
-                    {% endif %}
+                     <table style="width:100%">
+                              <tr>
+                                <td><strong>Request Made by: </strong> </td>
+                                <td>{{item['from']}}</td>
+                              </tr>
+                              <tr>
+                                <td><strong>Item: </strong></td>
+                                <td>{{item['idx']}}</td>
+                              </tr>
+                              <tr>
+                                <td><strong>Original Request Quantity: </strong> </td>
+                                <td>{{item["ini_qty"]}}</td>
+                              </tr>
+                              <tr>
+                                <td><strong>Pending Quantity: </strong> </td>
+                                <td>{{item['qty']}}</td>
+                              </tr>
+                              <tr>
+                                <td><strong>Initially requested at: </strong> </td>
+                                <td>{{item['ini_time'].strftime('%Y/%m/%d %H:%M:%S')}}</td>
+                              </tr>
+                              {% if item["ini_qty"] != item["qty"] %}
+                              <tr>
+                                <td><strong>Last response at: </strong> </td>
+                                <td>{{item['last_time'].strftime('%Y/%m/%d %H:%M:%S')}}</td>
+                              </tr>
+                              {% endif %}
+                    </table> 
+
+                    
                     <!-- <h6 ><i class="fa fa-calendar "></i>Initially requested: {{item['ini_time']}}</h6>
-                    <h6 ><i class="fa fa-calendar "></i>Last responded: {{item['last_time']}}</h6> -->                   
-
-                    <div class="row">
-                      <div class="col-md-2 col-sm-2 col-xs-2"> <i class="fa fa-calendar "></i> </div>
-                      <div class="col-md-4 col-sm-4 col-xs-4"> <h6>Initially requested:</h6> </div>
-                      <div class="col-md-6 col-sm-6 col-xs-6"> {{item['ini_time']}}</h6> </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-md-2 col-sm-2 col-xs-2"> <i class="fa fa-calendar "></i> </div>
-                      <div class="col-md-4 col-sm-4 col-xs-4"> <h6>Last responded:</h6> </div>
-                      <div class="col-md-6 col-sm-6 col-xs-6"> {{item['last_time']}}</h6> </div>
-                    </div>
+                    <h6 ><i class="fa fa-calendar "></i>Last responded: {{item['last_time']}}</h6> -->                 
 
                     <hr>
 
@@ -99,13 +120,13 @@
 
                           <div>
                             <label for="supply">Supply Quantity</label>
-                            <input class="form-control required" type="number" id="supply" name="supply" placeholder={{item['qty']}}> 
+                            <input class="form-control required" type="number" id="supply" name="supply" placeholder="{{item['qty']}}"> 
                           </div>
 
                          
                           <br>                         
 
-                          <button type="submit" class="btn btn-success submit">Accept</button>
+                          <button type="submit" class="btn btn-success submit">Supply</button>
 
                         </form>
 
@@ -127,17 +148,23 @@
                             <input type="text" id="idx" name="_id" value={{item['_id']}}>
                           </div>   
 
-                          <div class="button">
                             <button type="submit" class="btn btn-danger submit">Terminate</button>
-                          </div>
                         </form>
                       </div>
                       {%endif%}
 
+                    
+
+                  </div> 
+
+
                   </div>
 
-                  <div class="col-md-6 col-sm-6 col-xs-6">
-                  </div> 
+                   <div style="text-align: center;" id="mapdiv" class="col-md-6 col-sm-6 col-xs-6">
+                    {% if not item['from']==g.user['username'] and item['qty'] > 0 %}
+                    <div id="map"></div>
+                    {% endif %}
+                    </div>
 
               </div>
 
@@ -150,5 +177,96 @@
 
 {% block javascripts %}
   {{ super() }}
+  {% if not item['from']==g.user['username'] and item['qty'] > 0 %}
+   <script>
+    function initRequestMap() {
+    
+        var map;
+        var sourceLngLat = {{source}};
+        var destLngLat = {{dest}};
+
+        var mapOptions = {
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);        
+
+
+        var source = new google.maps.LatLng(sourceLngLat[1], sourceLngLat[0]);
+        var sourcemarker = new google.maps.Marker({
+                        position: source,
+                        map: map
+                      });
+
+        var dest = new google.maps.LatLng(destLngLat[1], destLngLat[0]);
+        var destmarker = new google.maps.Marker({
+                        position: dest,
+                        map: map
+                      });
+            
+        map.setCenter(source);
+
+        var path = new google.maps.MVCArray();
+ 
+        //Initialize the Direction Service
+        var service = new google.maps.DirectionsService();
+ 
+        //Set the Path Stroke Color
+        var poly = new google.maps.Polyline({ map: map, strokeColor: '#4986E7' });
+
+        path.push(source);
+        poly.setPath(path);
+        service.route({
+            origin: source,
+            destination: dest,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        }, function (result, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                for (var i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
+                    path.push(result.routes[0].overview_path[i]);
+                }
+            }
+        });    
+
+
+    
+
+        console.log("Map Drawn!");
+        
+        var service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix(
+          {
+            origins: [source],
+            destinations: [dest],
+            travelMode: 'DRIVING',
+          }, callback);
+
+        function callback(response, status) {
+          // See Parsing the Results for
+          // the basics of a callback function.
+          var distance = response["rows"][0]["elements"][0]["distance"]["text"];
+          var time = response["rows"][0]["elements"][0]["duration"]["text"];
+
+          var distdiv = document.createElement('div');
+          distdiv.innerHTML = "<h3> Distance: " + distance + "</h3>";
+
+          var div = document.getElementById("mapdiv");
+          div.appendChild(distdiv);
+
+          var timediv = document.createElement('div');
+          timediv.innerHTML = "<h3> Duration: " + time + "</sh3>";
+
+          div.appendChild(timediv);
+
+        }
+
+
+}
+    
+   </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{g.api_key}}&callback=initRequestMap"
+  type="text/javascript"></script>
+  {% endif %}
 {% endblock javascripts %}
 
