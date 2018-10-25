@@ -126,14 +126,14 @@ def update_resource():
 
         data = db.inventory.find_one({'username': g.user['username'], 'idx': idx})
         print data
-        
+    
     return render_template('resource/update.html')
 
 @bp.route('/accept', methods=['POST'])
 def accept_request():
     if request.method == 'POST':
-        _id = request.json['id']
-        sup = request.json['supply']
+        _id = request.form['_id']
+        sup = request.form['supply']
 
         item = db.requests.find_one({'_id': ObjectId(_id)})
 
@@ -166,7 +166,7 @@ def accept_request():
 def reject_request():
     if request.method == 'POST':
 
-        _id = request.json['id']
+        _id = request.form['_id']
 
         item = db.requests.find_one({'_id': ObjectId(_id)})
 
@@ -178,3 +178,11 @@ def reject_request():
             upsert=False)       
 
         return jsonify({'supplied': 0})
+
+@bp.route('/order-summary/<order_id>', methods=['GET'])
+def order_summary(order_id):
+    item = db.requests.find_one({'_id': ObjectId(order_id)})
+
+    item['_id'] = str(item['_id'])
+
+    return render_template('resource/order-summary.html', item=item)
